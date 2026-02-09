@@ -1,111 +1,32 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper function to check if user is authenticated
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-    
-    // Helper function to check if user is admin (you - the owner)
-    function isAdmin() {
-      return isAuthenticated() && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-    
-    // Helper function to check if user is staff (Nic or Jason)
-    function isStaff() {
-      return isAuthenticated() && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'staff' ||
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
-    }
-    
-    // =====================
-    // CLIENTS COLLECTION
-    // =====================
-    // Admin: Full access
-    // Staff: Read name only (via clientsPublic subcollection)
-    // Public: No access
-    match /clients/{clientId} {
-      allow read: if isAdmin();
-      allow write: if isAdmin();
-    }
-    
-    // Public-facing client data (name only, for staff)
-    match /clientsPublic/{clientId} {
-      allow read: if isStaff();
-      allow write: if isAdmin();
-    }
-    
-    // =====================
-    // APPOINTMENTS COLLECTION
-    // =====================
-    // Admin: Full access
-    // Staff: Read/write for their own appointments
-    // Public: Create only (booking)
     match /appointments/{appointmentId} {
-      allow read: if isStaff();
-      allow create: if true; // Public booking allowed
-      allow update: if isStaff();
-      allow delete: if isAdmin();
-    }
-    
-    // =====================
-    // DO NOT BOOK LIST
-    // =====================
-    // Admin only - staff cannot see who is blocked
-    match /doNotBook/{entryId} {
-      allow read, write: if isAdmin();
-    }
-    
-    // =====================
-    // EVIDENCE BOX (Honeypot logs, suspicious activity)
-    // =====================
-    // Admin only
-    match /evidence/{logId} {
-      allow read: if isAdmin();
-      allow create: if true; // API can write
-      allow update, delete: if isAdmin();
-    }
-    
-    // =====================
-    // CLIENT FINGERPRINTS (for frictionless return visits)
-    // =====================
-    // Server-side only, no client read
-    match /fingerprints/{fingerprintId} {
-      allow read: if false;
+      allow read: if request.auth != null;
       allow write: if false;
-      // Only accessible via Admin SDK
     }
-    
-    // =====================
-    // USERS (Staff accounts)
-    // =====================
-    match /users/{userId} {
-      allow read: if isAuthenticated() && request.auth.uid == userId;
-      allow write: if isAdmin();
+    match /agreements/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null 
+        && request.auth.uid == userId
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() >= 3
+        && request.resource.data.agreementVersion is string;
+      allow update: if false;
+      allow delete: if false;
     }
-    
-    // =====================
-    // SERVICES & SETTINGS
-    // =====================
-    match /services/{serviceId} {
-      allow read: if true; // Public can see services
-      allow write: if isAdmin();
+    match /agreements/{userId} {
+      allow read: if request.auth != null 
+        && request.auth.token.email == 'johnnymfd1@campusbarbersinc.com';
     }
-    
-    match /settings/{settingId} {
-      allow read: if isStaff();
-      allow write: if isAdmin();
+    match /clients/{clientId} {
+      allow read, write: if request.auth != null 
+        && request.auth.token.email == 'johnnymfd1@campusbarbersinc.com';
     }
-    
-    // =====================
-    // BARBERS (Public profiles)
-    // =====================
-    match /barbers/{barberId} {
-      allow read: if true; // Public can see barber profiles
-      allow write: if isAdmin();
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

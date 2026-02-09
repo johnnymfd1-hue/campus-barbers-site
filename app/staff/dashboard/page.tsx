@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore'
+import { collection, query, where, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import Link from 'next/link'
+import AgreementGate from '@/components/AgreementGate'
 
 interface Appointment {
   id: string
-  clientName: string // ONLY client name - no phone, email, or notes (John Dowen Rule)
+  clientName: string
   service: string
   barberId: string
   date: string
@@ -17,20 +18,27 @@ interface Appointment {
   status: 'confirmed' | 'completed' | 'no-show' | 'cancelled'
 }
 
+interface AgreementRecord {
+  fullName: string
+  signedAt: { seconds: number }
+  agreementVersion: string
+}
+
 export default function StaffDashboard() {
-  const [user, setUser] = useState<{ email: string } | null>(null)
+  const [user, setUser] = useState<{ email: string; uid: string } | null>(null)
   const [loading, setLoading] = useState(true)
+  const [agreementSigned, setAgreementSigned] = useState<boolean | null>(null)
+  const [agreementRecord, setAgreementRecord] = useState<AgreementRecord | null>(null)
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [selectedDate, setSelectedDate] = useState(() => {
     return new Date().toISOString().split('T')[0]
   })
   const router = useRouter()
 
-  // Auth check
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        setUser({ email: firebaseUser.email || '' })
+        setUser({ email: firebaseUser.email || '', uid: firebaseUser.uid })
         setLoading(false)
       } else {
         router.push('/staff')
@@ -39,33 +47,44 @@ export default function StaffDashboard() {
     return () => unsubscribe()
   }, [router])
 
-  // Fetch appointments for selected date
   useEffect(() => {
     if (!user) return
+    const checkAgreement = async () => {
+      try {
+        const agreementRef = doc(db, 'agreements', user.uid)
+        const agreementSnap = await getDoc(agreementRef)
+        if (agreementSnap.exists()) {
+          setAgreementSigned(true)
+          setAgreementRecord(agreementSnap.data() as AgreementRecord)
+        } else {
+          setAgreementSigned(false)
+        }
+      } catch (err) {
+        console.error('Error checking agreement:', err)
+        setAgreementSigned(false)
+      }
+    }
+    checkAgreement()
+  }, [user])
 
+  useEffect(() => {
+    if (!user || !agreementSigned) return
     const appointmentsRef = collection(db, 'appointments')
-    const q = query(
-      appointmentsRef,
-      where('date', '==', selectedDate),
-      orderBy('time', 'asc')
-    )
-
+    const q = query(appointmentsRef, where('date', '==', selectedDate), orderBy('time', 'asc'))
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const appts: Appointment[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        // IMPORTANT: Only extract name, service, time - NOT phone/email/notes
-        clientName: doc.data().clientName,
-        service: doc.data().service,
-        barberId: doc.data().barberId,
-        date: doc.data().date,
-        time: doc.data().time,
-        status: doc.data().status,
+      const appts: Appointment[] = snapshot.docs.map((d) => ({
+        id: d.id,
+        clientName: d.data().clientName,
+        service: d.data().service,
+        barberId: d.data().barberId,
+        date: d.data().date,
+        time: d.data().time,
+        status: d.data().status,
       }))
       setAppointments(appts)
     })
-
     return () => unsubscribe()
-  }, [user, selectedDate])
+  }, [user, selectedDate, agreementSigned])
 
   const handleLogout = async () => {
     await signOut(auth)
@@ -74,9 +93,7 @@ export default function StaffDashboard() {
 
   const formatTime = (time: string) => {
     return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
+      hour: 'numeric', minute: '2-digit', hour12: true,
     })
   }
 
@@ -90,7 +107,6 @@ export default function StaffDashboard() {
     }
   }
 
-  // Generate next 7 days for date picker
   const getDateOptions = () => {
     const dates = []
     for (let i = 0; i < 7; i++) {
@@ -104,7 +120,7 @@ export default function StaffDashboard() {
     return dates
   }
 
-  if (loading) {
+  if (loading || agreementSigned === null) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-spartan-500">
@@ -118,9 +134,23 @@ export default function StaffDashboard() {
     )
   }
 
+  if (!agreementSigned && user) {
+    return (
+      <AgreementGate
+        userEmail={user.email}
+        userId={user.uid}
+        onAccepted={() => {
+          setAgreementSigned(true)
+          getDoc(doc(db, 'agreements', user.uid)).then((snap) => {
+            if (snap.exists()) setAgreementRecord(snap.data() as AgreementRecord)
+          })
+        }}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen bg-cream">
-      {/* Header */}
       <header className="bg-spartan-500 text-cream py-4 px-6 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -134,47 +164,38 @@ export default function StaffDashboard() {
               <p className="text-cream/60 text-sm">{user?.email}</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="text-cream/70 hover:text-cream transition-colors text-sm"
-          >
-            Sign Out
-          </button>
+          <div className="flex items-center gap-4">
+            <Link href="/staff/agreement" className="text-cream/70 hover:text-cream transition-colors text-sm underline">View Agreement</Link>
+            <button onClick={handleLogout} className="text-cream/70 hover:text-cream transition-colors text-sm">Sign Out</button>
+          </div>
         </div>
       </header>
-
       <main className="max-w-6xl mx-auto p-6">
-        {/* Date Selector */}
+        {agreementRecord && (
+          <div className="mb-6 p-3 bg-green-50 border border-green-200 text-green-800 text-sm flex items-center justify-between">
+            <span>Agreement signed by <strong>{agreementRecord.fullName}</strong> on{' '}
+              {agreementRecord.signedAt?.seconds
+                ? new Date(agreementRecord.signedAt.seconds * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+                : 'date pending'}
+            </span>
+            <Link href="/staff/agreement" className="text-green-700 underline font-medium">View</Link>
+          </div>
+        )}
         <div className="mb-8">
           <h2 className="font-display text-lg font-semibold text-spartan-500 mb-3">Select Date</h2>
           <div className="flex gap-2 overflow-x-auto pb-2">
             {getDateOptions().map((date) => (
-              <button
-                key={date.value}
-                onClick={() => setSelectedDate(date.value)}
-                className={`px-4 py-2 whitespace-nowrap border-2 transition-all duration-200 ${
-                  selectedDate === date.value
-                    ? 'border-spartan-500 bg-spartan-500 text-cream'
-                    : 'border-spartan-500/20 hover:border-spartan-500/40 text-charcoal'
-                }`}
-              >
+              <button key={date.value} onClick={() => setSelectedDate(date.value)} className={`px-4 py-2 whitespace-nowrap border-2 transition-all duration-200 ${selectedDate === date.value ? 'border-spartan-500 bg-spartan-500 text-cream' : 'border-spartan-500/20 hover:border-spartan-500/40 text-charcoal'}`}>
                 {date.label}
               </button>
             ))}
           </div>
         </div>
-
-        {/* Appointments List */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-2xl font-bold text-spartan-500">
-              Appointments
-            </h2>
-            <span className="text-charcoal/60">
-              {appointments.length} appointment{appointments.length !== 1 ? 's' : ''}
-            </span>
+            <h2 className="font-display text-2xl font-bold text-spartan-500">Appointments</h2>
+            <span className="text-charcoal/60">{appointments.length} appointment{appointments.length !== 1 ? 's' : ''}</span>
           </div>
-
           {appointments.length === 0 ? (
             <div className="bg-white border-2 border-spartan-500/10 p-12 text-center">
               <svg className="w-16 h-16 text-charcoal/20 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -185,36 +206,24 @@ export default function StaffDashboard() {
           ) : (
             <div className="space-y-3">
               {appointments.map((appt) => (
-                <div
-                  key={appt.id}
-                  className="bg-white border-2 border-spartan-500/10 p-4 flex items-center justify-between"
-                >
+                <div key={appt.id} className="bg-white border-2 border-spartan-500/10 p-4 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="text-center min-w-[80px]">
-                      <p className="font-display text-xl font-bold text-spartan-500">
-                        {formatTime(appt.time)}
-                      </p>
+                      <p className="font-display text-xl font-bold text-spartan-500">{formatTime(appt.time)}</p>
                     </div>
                     <div className="border-l-2 border-spartan-500/10 pl-4">
                       <p className="font-semibold text-charcoal text-lg">{appt.clientName}</p>
                       <p className="text-charcoal/60">{appt.service}</p>
                     </div>
                   </div>
-                  <span className={`px-3 py-1 text-sm font-medium capitalize ${getStatusColor(appt.status)}`}>
-                    {appt.status}
-                  </span>
+                  <span className={`px-3 py-1 text-sm font-medium capitalize ${getStatusColor(appt.status)}`}>{appt.status}</span>
                 </div>
               ))}
             </div>
           )}
         </div>
-
-        {/* Note for staff */}
         <div className="mt-8 p-4 bg-gold/10 border border-gold/30 text-sm text-charcoal/70">
-          <p>
-            <strong>Note:</strong> For client contact information or to mark appointments as completed/no-show, 
-            please contact the shop owner.
-          </p>
+          <p><strong>Note:</strong> For client contact information or to mark appointments as completed/no-show, please contact the shop owner.</p>
         </div>
       </main>
     </div>
