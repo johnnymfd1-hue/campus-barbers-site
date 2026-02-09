@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --spartan-green: #18453B;
+  --gold: #C5A572;
+  --cream: #F5F1E8;
+  --charcoal: #1A1A1A;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background-color: var(--cream);
+  color: var(--charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Barber pole animation */
+@keyframes barber-pole {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 60px; }
+}
+
+.barber-pole {
+  background: repeating-linear-gradient(
+    -45deg,
+    #fff,
+    #fff 10px,
+    #C5A572 10px,
+    #C5A572 20px,
+    #fff 20px,
+    #fff 30px,
+    #18453B 30px,
+    #18453B 40px
+  );
+  animation: barber-pole 2s linear infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--spartan-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #153d34;
+}
+
+/* Selection */
+::selection {
+  background: var(--gold);
+  color: var(--charcoal);
+}
+
+/* Focus states */
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Button base */
+.btn-primary {
+  @apply bg-spartan-500 text-cream px-6 py-3 font-semibold tracking-wide transition-all duration-300;
+  @apply hover:bg-spartan-600 hover:shadow-lg hover:shadow-spartan-500/20;
+  @apply active:scale-[0.98];
+}
+
+.btn-secondary {
+  @apply border-2 border-spartan-500 text-spartan-500 px-6 py-3 font-semibold tracking-wide transition-all duration-300;
+  @apply hover:bg-spartan-500 hover:text-cream;
+  @apply active:scale-[0.98];
+}
+
+/* Form inputs */
+.input-field {
+  @apply w-full px-4 py-3 bg-white border-2 border-spartan-500/20 rounded-none;
+  @apply focus:border-spartan-500 focus:ring-0 transition-colors duration-200;
+  @apply placeholder:text-charcoal/40;
+}
+
+/* Honeypot field - invisible to humans */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -1;
+  pointer-events: none;
+  tab-index: -1;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Stagger animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
