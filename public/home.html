@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Barbers Inc. | Est. 1952 | East Lansing, MI</title>
+<meta name="description" content="The oldest continuous business on Grand River Ave. Professional haircuts near Michigan State University since 1952.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#18453B;--gold:#C4A44A;--cream:#FAF8F5;--dark:#1a1a1a}
+body{font-family:'Source Sans 3',sans-serif;color:var(--dark);background:var(--cream)}
+h1,h2,h3{font-family:'Playfair Display',serif}
+a{text-decoration:none;color:inherit}
+nav{position:fixed;top:0;width:100%;background:var(--green);padding:12px 0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+nav .inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center}
+nav .logo{color:var(--gold);font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700}
+nav .logo span{color:#fff;font-weight:400;font-size:.85rem;display:block;font-family:'Source Sans 3',sans-serif}
+nav ul{list-style:none;display:flex;gap:24px}
+nav a{color:#fff;font-size:.95rem;font-weight:600;transition:color .2s}
+nav a:hover{color:var(--gold)}
+.nav-book{background:var(--gold);color:var(--green)!important;padding:8px 20px;border-radius:6px;font-weight:700}
+.hero{background:var(--green);color:#fff;padding:140px 20px 80px;text-align:center}
+.hero h1{font-size:3rem;color:var(--gold);margin-bottom:12px}
+.hero p.sub{font-size:1.3rem;font-weight:300;margin-bottom:30px;opacity:.9}
+.hero-info{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-bottom:35px}
+.hero-info div{text-align:center}
+.hero-info .label{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:4px}
+.hero-info .value{font-size:1rem}
+.hero .stars{color:var(--gold);font-size:1.2rem;margin-bottom:8px}
+.hero-cta{display:inline-block;background:var(--gold);color:var(--green);padding:14px 40px;border-radius:8px;font-weight:700;font-size:1.1rem;transition:transform .2s}
+.hero-cta:hover{transform:translateY(-2px)}
+section{padding:70px 20px}
+.container{max-width:1000px;margin:0 auto}
+.section-title{text-align:center;margin-bottom:40px}
+.section-title h2{font-size:2.2rem;color:var(--green);margin-bottom:8px}
+.section-title .line{width:60px;height:3px;background:var(--gold);margin:0 auto}
+.about-text{max-width:700px;margin:0 auto;text-align:center;font-size:1.05rem;line-height:1.8;color:#444}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.service-card{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;transition:transform .2s}
+.service-card:hover{transform:translateY(-3px)}
+.service-card h3{font-size:1.1rem;color:var(--green)}
+.service-card .desc{font-size:.85rem;color:#777;margin-top:4px}
+.service-card .price{font-size:1.4rem;font-weight:700;color:var(--gold)}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.review-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.review-card .stars{color:var(--gold);margin-bottom:8px}
+.review-card p{font-style:italic;color:#555;line-height:1.6;margin-bottom:12px}
+.review-card .author{font-weight:700;color:var(--green);font-size:.9rem}
+.booking{background:var(--green);color:#fff;text-align:center}
+.booking h2{color:var(--gold)}
+.booking .line{background:rgba(255,255,255,.3)}
+.booking p{margin-bottom:25px;opacity:.9}
+.booking-btn{display:inline-block;background:var(--gold);color:var(--green);padding:14px 40px;border-radius:8px;font-weight:700;font-size:1.1rem}
+footer{background:var(--dark);color:#aaa;padding:40px 20px;text-align:center}
+footer .name{color:var(--gold);font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:6px}
+footer p{font-size:.85rem;margin-bottom:4px}
+footer .copy{margin-top:20px;font-size:.75rem;color:#666}
+@media(max-width:768px){.hero h1{font-size:2rem}.hero p.sub{font-size:1rem}.hero-info{gap:20px}nav ul{display:none}section{padding:50px 20px}}
+</style>
+</head>
+<body>
+<nav><div class="inner"><div class="logo">Campus Barbers<span>Est. 1952 &bull; East Lansing</span></div><ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#reviews">Reviews</a></li><li><a href="https://campusbarbersinc.setmore.com" target="_blank" class="nav-book">Book Now</a></li></ul></div></nav>
+<section class="hero">
+<h1>Campus Barbers Inc.</h1>
+<p class="sub">The Oldest Continuous Business on Grand River Avenue</p>
+<div class="hero-info"><div><div class="label">Location</div><div class="value">621 E Grand River Ave</div></div><div><div class="label">Hours</div><div class="value">Mon–Fri 8am–6pm &bull; Sat 8am–2pm</div></div><div><div class="label">Phone</div><div class="value">(517) 332-4377</div></div></div>
+<div class="stars">★★★★★ 4.8 on Google</div>
+<a href="https://campusbarbersinc.setmore.com" target="_blank" class="hero-cta">Book Your Appointment</a>
+</section>
+<section id="about"><div class="container"><div class="section-title"><h2>72+ Years of Tradition</h2><div class="line"></div></div><p class="about-text">Since 1952, Campus Barbers has served the Michigan State University community with quality haircuts and genuine conversation. We're not just a barbershop — we're a landmark. Three generations of Spartans have sat in our chairs, and we take that legacy seriously. Walk in or book online — either way, you're family.</p></div></section>
+<section id="services" style="background:#fff"><div class="container"><div class="section-title"><h2>Services</h2><div class="line"></div></div><div class="services-grid">
+<div class="service-card"><div><h3>Regular Haircut</h3><div class="desc">Classic precision cut</div></div><div class="price">$20</div></div>
+<div class="service-card"><div><h3>Buzz Cut</h3><div class="desc">Clean & sharp</div></div><div class="price">$15</div></div>
+<div class="service-card"><div><h3>Beard Trim</h3><div class="desc">Shape & detail</div></div><div class="price">$15</div></div>
+<div class="service-card"><div><h3>Haircut + Beard</h3><div class="desc">The full service</div></div><div class="price">$35</div></div>
+<div class="service-card"><div><h3>Kids Cut</h3><div class="desc">Ages 12 & under</div></div><div class="price">$18</div></div>
+<div class="service-card"><div><h3>Senior Cut</h3><div class="desc">65 & over</div></div><div class="price">$18</div></div>
+</div></div></section>
+<section id="reviews"><div class="container"><div class="section-title"><h2>What Our Clients Say</h2><div class="line"></div></div><div class="reviews-grid">
+<div class="review-card"><div class="stars">★★★★★</div><p>"Been coming here since freshman year. Best barbershop in East Lansing, hands down."</p><div class="author">— Jake M.</div></div>
+<div class="review-card"><div class="stars">★★★★★</div><p>"Great cuts, fair prices, and they actually listen to what you want. Old school done right."</p><div class="author">— Marcus T.</div></div>
+<div class="review-card"><div class="stars">★★★★★</div><p>"A real barbershop. No gimmicks, just great haircuts. Been going for 10+ years."</p><div class="author">— Ryan K.</div></div>
+</div></div></section>
+<section class="booking"><div class="container"><div class="section-title"><h2>Ready for a Fresh Cut?</h2><div class="line"></div></div><p>Walk-ins welcome. Or book online for a guaranteed spot.</p><a href="https://campusbarbersinc.setmore.com" target="_blank" class="booking-btn">Book Now on Setmore</a></div></section>
+<footer><div class="name">Campus Barbers Inc.</div><p>621 E Grand River Ave, East Lansing, MI 48823</p><p>(517) 332-4377 &bull; Mon–Fri 8am–6pm &bull; Sat 8am–2pm</p><div class="copy">&copy; 2025 Campus Barbers Inc. All rights reserved. Est. 1952.</div></footer>
+</body>
+</html>
