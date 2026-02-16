@@ -7,27 +7,30 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import-clients": "node scripts/import-clients.js"
+    "import-clients": "node scripts/import-clients.js",
+    "drive-statements": "node scripts/drive-statements/index.js",
+    "drive-statements:dry": "node scripts/drive-statements/index.js --dry-run"
   },
   "dependencies": {
-    "next": "14.2.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "csv-parse": "^5.5.5",
+    "date-fns": "^3.6.0",
+    "fingerprintjs": "^0.5.3",
     "firebase": "^10.12.0",
     "firebase-admin": "^12.1.0",
     "framer-motion": "^11.2.0",
-    "date-fns": "^3.6.0",
-    "csv-parse": "^5.5.5",
-    "ua-parser-js": "^1.0.38",
-    "fingerprintjs": "^0.5.3"
+    "googleapis": "^144.0.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ua-parser-js": "^1.0.38"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "typescript": "^5.4.5",
-    "tailwindcss": "^3.4.4",
+    "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
-    "autoprefixer": "^10.4.19"
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.5"
   }
 }

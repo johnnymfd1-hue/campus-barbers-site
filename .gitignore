@@ -44,3 +44,7 @@ firebase-debug.log
 # CSV data (sensitive)
 clients.csv
 *.csv
+
+# Google API credentials (sensitive)
+scripts/drive-statements/credentials.json
+scripts/drive-statements/token.json
