@@ -312,7 +312,51 @@ CREATE TRIGGER trg_appointments_updated_at
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 -- ---------------------------------------------------------------------------
--- 12. Enable pg_trgm for fuzzy name search (used by idx_clients_name)
+-- 12. Agreements table (digital signatures for non-solicitation agreements)
+-- ---------------------------------------------------------------------------
+CREATE TABLE public.agreements (
+  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  staff_id          uuid        NOT NULL REFERENCES public.staff(id) ON DELETE CASCADE,
+  email             text        NOT NULL,
+  full_name         text        NOT NULL,
+  agreement_version text        NOT NULL,
+  signed_at         timestamptz NOT NULL DEFAULT now(),
+  user_agent        text,
+  ip_address        inet,
+  created_at        timestamptz NOT NULL DEFAULT now(),
+
+  -- Each staff member can only sign each version once.
+  UNIQUE (staff_id, agreement_version)
+);
+
+COMMENT ON TABLE  public.agreements IS 'Digital signatures for the Non-Solicitation & Confidentiality Agreement. Immutable once created.';
+COMMENT ON COLUMN public.agreements.agreement_version IS 'Tracks which version of the agreement was signed (e.g. 2026-02-17-v1).';
+
+CREATE INDEX idx_agreements_staff ON public.agreements (staff_id);
+
+-- RLS: staff can read their own agreements; admins can read all.
+ALTER TABLE public.agreements ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY agreements_self_select ON public.agreements
+  FOR SELECT TO authenticated
+  USING (staff_id = auth.uid() OR public.is_admin());
+
+-- Only the service role (API) can create agreement records — never the client directly.
+-- This ensures the server validates the signature before persisting.
+CREATE POLICY agreements_service_insert ON public.agreements
+  FOR INSERT TO service_role
+  WITH CHECK (true);
+
+-- Staff can insert their own agreement (for client-side signing flow).
+CREATE POLICY agreements_staff_insert ON public.agreements
+  FOR INSERT TO authenticated
+  WITH CHECK (staff_id = auth.uid());
+
+-- Agreements are immutable: no updates, no deletes.
+-- (No UPDATE or DELETE policies = blocked by default with RLS enabled.)
+
+-- ---------------------------------------------------------------------------
+-- 13. Enable pg_trgm for fuzzy name search (used by idx_clients_name)
 -- ---------------------------------------------------------------------------
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 

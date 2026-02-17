@@ -42,7 +42,7 @@ export default function AgreementGate({ userEmail, userId, onAccepted }: Agreeme
         userId,
         email: userEmail,
         fullName: fullName.trim(),
-        agreementVersion: '2025-02-09-v1',
+        agreementVersion: '2026-02-17-v2',
         signedAt: serverTimestamp(),
         userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
         ipNote: 'IP logged server-side via Vercel headers',
@@ -67,6 +67,48 @@ export default function AgreementGate({ userEmail, userId, onAccepted }: Agreeme
           <p className="text-cream/70 mt-1 text-sm">Campus Barbers Inc. — Required Before Portal Access</p>
         </div>
         <div className="p-6">
+          {/* ── AI / Legal Disclaimer (barbers only) ── */}
+          <div className="mb-6 border-2 border-amber-400/60 bg-amber-50 p-5">
+            <div className="flex items-start gap-3">
+              <svg className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 className="font-bold text-amber-900 text-sm mb-1">Important Legal Disclaimer</h3>
+                <p className="text-sm text-amber-800 leading-relaxed">
+                  This agreement was prepared with AI assistance and is <strong>not a substitute for legal counsel</strong>. While it references current Michigan statutes (MCL 445.774a — Michigan Antitrust Reform Act), Campus Barbers strongly recommends that you consult with your own attorney before signing. You have the right to take a copy of this agreement and seek independent legal advice at your own expense before executing it.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Michigan Law Context (educational, for barbers) ── */}
+          <details className="mb-6 border-2 border-spartan-500/10 bg-white">
+            <summary className="px-5 py-3 cursor-pointer font-medium text-sm text-spartan-500 hover:bg-spartan-500/5 transition-colors select-none">
+              Michigan Law: What You Should Know Before Signing
+            </summary>
+            <div className="px-5 pb-5 text-sm leading-relaxed text-charcoal/80 border-t border-spartan-500/10 pt-4 space-y-3">
+              <p>
+                In Michigan, restrictive covenants are governed by the <strong>Michigan Antitrust Reform Act (MCL 445.774a)</strong>. Courts will enforce these agreements, but only if they are considered &quot;reasonable.&quot; Michigan courts heavily favor <strong>Non-Solicitation Agreements</strong> over blanket Non-Compete Agreements.
+              </p>
+              <div>
+                <p className="font-semibold text-spartan-500 mb-1">What does NOT hold up in court:</p>
+                <p>A contract that says &quot;You cannot cut hair within 50 miles of Campus Barbers for the next 5 years&quot; would almost certainly be struck down. It is too broad and prevents you from making a living.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-spartan-500 mb-1">What DOES hold up in court:</p>
+                <p>A contract that says &quot;You can go work at the shop down the street, but for the next 12 months you cannot text, email, or direct-message my clients to try to poach them&quot; is highly enforceable. It protects the business&apos;s client list without forcing you out of the industry.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-spartan-500 mb-1">The &quot;Blue Pencil&quot; Rule:</p>
+                <p>Michigan courts can modify overly strict terms rather than throwing out the entire contract. For example, a judge could reduce a 24-month restriction to 12 months instead of voiding the agreement entirely.</p>
+              </div>
+              <p className="text-xs text-charcoal/50 pt-2 border-t border-charcoal/10">
+                This summary is for informational purposes only and does not constitute legal advice. Consult a licensed Michigan attorney for advice specific to your situation.
+              </p>
+            </div>
+          </details>
+
           <p className="text-sm text-charcoal/60 mb-3 font-medium">Read the entire agreement below. You must scroll to the bottom before signing.</p>
           <div ref={scrollRef} onScroll={handleScroll} className="h-[400px] overflow-y-auto border-2 border-spartan-500/20 p-6 bg-white text-sm leading-relaxed text-charcoal">
             <h2 className="text-center font-bold text-lg mb-1">CAMPUS BARBERS INC.</h2>
@@ -150,7 +192,7 @@ export default function AgreementGate({ userEmail, userId, onAccepted }: Agreeme
             <p className="mb-4 ml-6">(f) A breach will cause irreparable and ongoing harm to the Company.</p>
             <div className="border-t-2 border-charcoal/20 pt-4 mt-6">
               <p className="font-bold text-center text-base">END OF AGREEMENT</p>
-              <p className="text-center text-xs text-charcoal/50 mt-2">Agreement Version 2025-02-09-v1</p>
+              <p className="text-center text-xs text-charcoal/50 mt-2">Agreement Version 2026-02-17-v2</p>
             </div>
           </div>
           {!scrolledToBottom && (
@@ -171,7 +213,7 @@ export default function AgreementGate({ userEmail, userId, onAccepted }: Agreeme
               </div>
               <label className="flex items-start gap-3 mb-4 cursor-pointer">
                 <input type="checkbox" checked={acknowledged} onChange={(e) => setAcknowledged(e.target.checked)} className="mt-1 h-4 w-4 border-2 border-spartan-500/40 accent-spartan-500" disabled={!scrolledToBottom} />
-                <span className="text-sm text-charcoal">I have read this Agreement in its entirety, I understand its terms, and I voluntarily agree to be bound by it. I understand that this is a legally binding agreement and that I have the right to consult an attorney before signing. By typing my name and checking this box, I am executing this Agreement with the same legal force as a handwritten signature.</span>
+                <span className="text-sm text-charcoal">I have read this Agreement in its entirety, I understand its terms, and I voluntarily agree to be bound by it. I acknowledge the legal disclaimer above and understand that I have the right to consult an independent attorney before signing. I understand that this is a legally binding agreement and that by typing my name and checking this box, I am executing this Agreement with the same legal force as a handwritten signature.</span>
               </label>
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 mb-4 text-sm">{error}</div>
