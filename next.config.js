@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['firebase-admin'],
+    serverComponentsExternalPackages: [
+      'firebase-admin',
+      '@google-cloud/firestore',
+      '@google-cloud/storage',
+    ],
   },
 }
 
