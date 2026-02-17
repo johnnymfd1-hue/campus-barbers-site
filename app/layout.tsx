@@ -26,9 +26,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#18453B" />
+        <meta name="theme-color" content="#0D0709" />
       </head>
-      <body className="min-h-screen bg-cream">
+      <body className="min-h-screen bg-noir-500">
         <div className="noise-overlay" aria-hidden="true" />
         {children}
       </body>

@@ -33,8 +33,8 @@ export default function Navigation({ onBookClick }: NavigationProps) {
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled 
-            ? 'bg-spartan-500/95 backdrop-blur-md shadow-lg py-3' 
+          scrolled
+            ? 'bg-noir-500/95 backdrop-blur-md shadow-lg shadow-crimson/5 py-3'
             : 'bg-transparent py-6'
         }`}
       >
@@ -42,7 +42,7 @@ export default function Navigation({ onBookClick }: NavigationProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <img src="/logo.png" alt="Campus Barbers" className="w-10 h-10 rounded-full" />
-            <span className="font-display text-cream text-xl font-semibold hidden sm:block">
+            <span className="font-display text-ivory text-xl font-semibold hidden sm:block">
               Campus Barbers
             </span>
           </Link>
@@ -53,14 +53,14 @@ export default function Navigation({ onBookClick }: NavigationProps) {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-cream/80 hover:text-cream font-medium transition-colors duration-200"
+                className="text-ivory/60 hover:text-ivory font-medium transition-colors duration-200 tracking-wide text-sm uppercase"
               >
                 {link.label}
               </a>
             ))}
             <button
               onClick={onBookClick}
-              className="bg-gold text-charcoal px-6 py-2.5 font-semibold tracking-wide hover:bg-gold-light transition-all duration-300"
+              className="bg-crimson text-ivory px-6 py-2.5 font-semibold tracking-widest uppercase text-sm hover:bg-crimson-light transition-all duration-300 hover:shadow-glow"
             >
               Book Now
             </button>
@@ -69,7 +69,7 @@ export default function Navigation({ onBookClick }: NavigationProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-cream p-2"
+            className="md:hidden text-ivory p-2"
             aria-label="Toggle menu"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,7 +91,7 @@ export default function Navigation({ onBookClick }: NavigationProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-spartan-500 pt-24 px-6 md:hidden"
+            className="fixed inset-0 z-40 bg-noir-500 pt-24 px-6 md:hidden"
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link) => (
@@ -99,7 +99,7 @@ export default function Navigation({ onBookClick }: NavigationProps) {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-cream text-2xl font-display font-semibold"
+                  className="text-ivory text-2xl font-display font-semibold"
                 >
                   {link.label}
                 </a>
@@ -109,7 +109,7 @@ export default function Navigation({ onBookClick }: NavigationProps) {
                   setMobileMenuOpen(false)
                   onBookClick()
                 }}
-                className="bg-gold text-charcoal px-8 py-4 text-xl font-semibold tracking-wide mt-4"
+                className="bg-crimson text-ivory px-8 py-4 text-xl font-semibold tracking-widest uppercase mt-4 hover:bg-crimson-light transition-all duration-300"
               >
                 Book Appointment
               </button>
