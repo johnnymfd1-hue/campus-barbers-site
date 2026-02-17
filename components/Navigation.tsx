@@ -24,6 +24,7 @@ export default function Navigation({ onBookClick }: NavigationProps) {
     { href: '#services', label: 'Services' },
     { href: '#team', label: 'Barbers' },
     { href: '#location', label: 'Location' },
+    { href: '/careers', label: 'Careers' },
   ]
 
   return (
