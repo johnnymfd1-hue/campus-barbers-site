@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import-clients": "node scripts/import-clients.js"
+    "import-clients": "node scripts/import-clients.js",
+    "pnl": "node scripts/pnl-report.js",
+    "pnl:expenses": "node scripts/pnl-report.js --expenses"
   },
   "dependencies": {
     "next": "14.2.5",

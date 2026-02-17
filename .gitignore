@@ -44,3 +44,7 @@ firebase-debug.log
 # CSV data (sensitive)
 clients.csv
 *.csv
+
+# PNL reports (private financial data)
+.pnl-expenses.json
+reports/
