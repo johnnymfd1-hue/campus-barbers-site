@@ -1,23 +1,55 @@
-import { initializeApp, getApps, cert, App } from 'firebase-admin/app'
-import { getFirestore } from 'firebase-admin/firestore'
-import { getAuth } from 'firebase-admin/auth'
+import { initializeApp, getApps, cert, type App } from 'firebase-admin/app'
+import { getFirestore, type Firestore } from 'firebase-admin/firestore'
+import { getAuth, type Auth } from 'firebase-admin/auth'
 
-let app: App
+let _app: App | null = null
+let _db: Firestore | null = null
+let _auth: Auth | null = null
 
-if (getApps().length === 0) {
-  // For production, use service account from environment variable
-  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
-    ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
-    : undefined
+function getOrInitApp(): App {
+  if (_app) return _app
+  if (getApps().length > 0) {
+    _app = getApps()[0]
+    return _app
+  }
 
-  app = initializeApp({
-    credential: serviceAccount ? cert(serviceAccount) : undefined,
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
+  if (!raw) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY is not set')
+  }
+
+  _app = initializeApp({
+    credential: cert(JSON.parse(raw)),
     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   })
-} else {
-  app = getApps()[0]
+  return _app
 }
 
-export const adminDb = getFirestore(app)
-export const adminAuth = getAuth(app)
-export default app
+export function getAdminDb(): Firestore {
+  if (!_db) _db = getFirestore(getOrInitApp())
+  return _db
+}
+
+export function getAdminAuth(): Auth {
+  if (!_auth) _auth = getAuth(getOrInitApp())
+  return _auth
+}
+
+// Keep backward compat — but these are now getter-based
+export const adminDb = new Proxy({} as Firestore, {
+  get(_, prop, receiver) {
+    const db = getAdminDb()
+    const val = (db as any)[prop]
+    if (typeof val === 'function') return val.bind(db)
+    return val
+  },
+})
+
+export const adminAuth = new Proxy({} as Auth, {
+  get(_, prop, receiver) {
+    const a = getAdminAuth()
+    const val = (a as any)[prop]
+    if (typeof val === 'function') return val.bind(a)
+    return val
+  },
+})

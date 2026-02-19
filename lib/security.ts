@@ -1,7 +1,7 @@
 // Security utilities for Campus Barbers
 // Handles: Fingerprinting, Honeypot detection, IP capture, Evidence logging
 
-import { headers } from 'next/headers'
+import { headers as getHeaders } from 'next/headers'
 
 export interface DeviceFingerprint {
   ip: string
@@ -28,8 +28,8 @@ export interface EvidenceRecord {
 /**
  * Get the real IP address, even behind Cloudflare or other proxies
  */
-export function getRealIP(): string {
-  const headersList = headers()
+export async function getRealIP(): Promise<string> {
+  const headersList = await getHeaders()
   
   // Cloudflare
   const cfIP = headersList.get('cf-connecting-ip')
@@ -56,11 +56,11 @@ export function getRealIP(): string {
 /**
  * Get all request metadata for evidence logging
  */
-export function getRequestMetadata(): Omit<EvidenceRecord, 'honeypotTriggered' | 'honeypotValue' | 'timestamp'> {
-  const headersList = headers()
+export async function getRequestMetadata(): Promise<Omit<EvidenceRecord, 'honeypotTriggered' | 'honeypotValue' | 'timestamp'>> {
+  const headersList = await getHeaders()
   
   return {
-    ip: getRealIP(),
+    ip: await getRealIP(),
     userAgent: headersList.get('user-agent') || 'unknown',
     referrer: headersList.get('referer') || headersList.get('referrer') || 'direct',
     path: headersList.get('x-invoke-path') || 'unknown',
@@ -124,12 +124,12 @@ export function isHoneypotTriggered(formData: FormData | Record<string, unknown>
 /**
  * Create an evidence record for logging suspicious activity
  */
-export function createEvidenceRecord(
+export async function createEvidenceRecord(
   honeypotTriggered: boolean,
   honeypotValue?: string,
   additionalData?: Record<string, unknown>
-): EvidenceRecord {
-  const metadata = getRequestMetadata()
+): Promise<EvidenceRecord> {
+  const metadata = await getRequestMetadata()
   
   return {
     ...metadata,
